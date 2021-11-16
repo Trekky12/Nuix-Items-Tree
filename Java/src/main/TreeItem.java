@@ -12,17 +12,21 @@ public class TreeItem {
     private int descendants = 0;
 
     private boolean isTagged = false;
+    private boolean isItem;
 
     public TreeItem(String name) {
         this.name = name;
+        this.isItem = false;
     }
 
     public TreeItem(nuix.Item item) {
+        this.isItem = true;
         //this.item = item;
         this.name = item.getName();
         this.descendants = item.getDescendants().size();
         this.guid = item.getGuid();
         this.tags = new ArrayList<>(item.getTags());
+        this.isItem = true;
     }
 
     public void addChild(TreeItem childItem) {
@@ -36,10 +40,25 @@ public class TreeItem {
     public boolean hasChild(TreeItem childItem) {
         return children.contains(childItem);
     }
+    
+    public TreeItem getChild(TreeItem childItem){
+        return children.get(children.indexOf(childItem));
+    }
 
     @Override
     public String toString() {
         return this.name;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object != null && object instanceof TreeItem) {
+            TreeItem that = ((TreeItem) object);
+            if (!this.isItem && !that.isItem) {
+                return this.name.equals(that.name);
+            }
+        }
+        return super.equals(object);
     }
 
     public void addTag(String tag) {

@@ -42,7 +42,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         initComponents();
 
         try {
-            File jarFolder = new File(MainFrame.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
+            File jarFolder = new File(NuixItemsTree.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
             propertiesFile = new File(jarFolder, this.properties_filename);
             loadProperties(propertiesFile);
 

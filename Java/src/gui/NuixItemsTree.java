@@ -10,13 +10,13 @@ import javax.swing.JOptionPane;
 import nuix.Case;
 import org.apache.log4j.Logger;
 
-public class MainFrame extends javax.swing.JFrame {
+public class NuixItemsTree extends javax.swing.JFrame {
 
-    private final static Logger logger = Logger.getLogger(MainFrame.class);
+    private final static Logger logger = Logger.getLogger(NuixItemsTree.class);
 
     private final SettingsDialog settingsDialog = new SettingsDialog(this, false);
 
-    public MainFrame(Case nuixCase) {
+    public NuixItemsTree(Case nuixCase) {
         logger.info("Starting Nuix Items Tree");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);

@@ -327,12 +327,12 @@ public class InvestigatePanel extends javax.swing.JPanel {
 
             if (tagItem(node, SettingsDialog.tagNotImportantName, true)) {
                 node.addTag(SettingsDialog.tagNotImportantName);
-                
+
                 addTagImportantBtn.setEnabled(false);
                 removeTagImportantBtn.setEnabled(false);
                 addTagNotImportantBtn.setEnabled(false);
                 removeTagNotImportantBtn.setEnabled(true);
-                
+
                 saveTree();
             }
             itemsTree.repaint();
@@ -553,8 +553,22 @@ public class InvestigatePanel extends javax.swing.JPanel {
                     }
                 }
             } else {
-                if (!root.hasChild(result)) {
-                    root.addChild(result);
+                if (this.nuixCase.isCompound()) {
+                    TreeItem caseName = new TreeItem(pathItem.getCaseName());
+
+                    if (root.hasChild(caseName)) {
+                        caseName = root.getChild(caseName);
+                    } else {
+                        root.addChild(caseName);
+                    }
+
+                    if (!caseName.hasChild(result)) {
+                        caseName.addChild(result);
+                    }
+                } else {
+                    if (!root.hasChild(result)) {
+                        root.addChild(result);
+                    }
                 }
             }
         }
@@ -631,13 +645,13 @@ public class InvestigatePanel extends javax.swing.JPanel {
                     gson.toJson(itemsTreeModel, writer);
                 } catch (IOException ex) {
                     logger.error("Error saving tree", ex);
-                    MainFrame.makeMessageAndExit("Error saving the tree", false);
+                    NuixItemsTree.makeMessageAndExit("Error saving the tree", false);
                 }
                 statusLabel.setText(" ");
             });
             saveThread.start();
         } else {
-            MainFrame.makeMessageAndExit("Saving not possible! No File specified!", false);
+            NuixItemsTree.makeMessageAndExit("Saving not possible! No File specified!", false);
         }
     }
 
@@ -673,7 +687,7 @@ public class InvestigatePanel extends javax.swing.JPanel {
                         initTree();
 
                         if (!itemsTreeModel.getRoot().toString().equals(nuixCase.getName())) {
-                            MainFrame.makeMessageAndExit("Nuix Case Name is different from root Node, no tagging possible!", false);
+                            NuixItemsTree.makeMessageAndExit("Nuix Case Name is different from root Node, no tagging possible!", false);
                             addTagImportantBtn.setEnabled(false);
                             removeTagImportantBtn.setEnabled(false);
                             addTagNotImportantBtn.setEnabled(false);
@@ -689,7 +703,7 @@ public class InvestigatePanel extends javax.swing.JPanel {
 
                     } catch (IOException ex) {
                         logger.error("Error loading tree", ex);
-                        MainFrame.makeMessageAndExit("Error loading the tree", false);
+                        NuixItemsTree.makeMessageAndExit("Error loading the tree", false);
                     }
                 }
             }
@@ -700,8 +714,16 @@ public class InvestigatePanel extends javax.swing.JPanel {
     }
 
     private void expandTree(JTree tree, boolean expand) {
-        TreeItem root = (TreeItem) tree.getModel().getRoot();
-        expandAll(tree, new TreePath(root), expand);
+        Thread loadThread = new Thread(() -> {
+
+            statusLabel.setText("Expanding tree...");
+            openTreeBtn.setEnabled(false);
+            TreeItem rootItem = (TreeItem) tree.getModel().getRoot();
+            expandAll(tree, new TreePath(rootItem), expand);
+            statusLabel.setText(" ");
+            openTreeBtn.setEnabled(true);
+        });
+        loadThread.start();
     }
 
     private void expandAll(JTree tree, TreePath path, boolean expand) {
@@ -736,7 +758,7 @@ public class InvestigatePanel extends javax.swing.JPanel {
 
             if (items.size() != 1) {
                 logger.error(String.format("Item %s not found for tagging!", node.getGuid()));
-                MainFrame.makeMessageAndExit("Item not found. Probably already tagged or wrong or closed nuix case.", false);
+                NuixItemsTree.makeMessageAndExit("Item not found. Probably already tagged or wrong or closed nuix case.", false);
             } else {
 
                 if (doTag) {
@@ -749,7 +771,7 @@ public class InvestigatePanel extends javax.swing.JPanel {
 
                 if (!result) {
                     logger.error(String.format("Item %s tagging %s failed", node.getGuid(), tagName));
-                    MainFrame.makeMessageAndExit("Item could not be tagged. Probably already tagged or wrong or closed nuix case.", false);
+                    NuixItemsTree.makeMessageAndExit("Item could not be tagged. Probably already tagged or wrong or closed nuix case.", false);
                 }
 
             }

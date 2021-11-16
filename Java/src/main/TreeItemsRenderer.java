@@ -1,6 +1,6 @@
 package main;
 
-import gui.MainFrame;
+import gui.NuixItemsTree;
 import gui.SettingsDialog;
 import java.awt.Component;
 import java.awt.Toolkit;
@@ -20,10 +20,10 @@ public class TreeItemsRenderer extends DefaultTreeCellRenderer {
     private final Icon taggedNotImportantIcon;
 
     public TreeItemsRenderer() {
-        this.closedItemIcon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(MainFrame.class.getResource("/res/sharp_folder_black_24dp.png")));
-        this.openedItemIcon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(MainFrame.class.getResource("/res/sharp_folder_open_black_24dp.png")));
-        this.taggedImportantIcon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(MainFrame.class.getResource("/res/sharp_local_offer_green_24dp.png")));
-        this.taggedNotImportantIcon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(MainFrame.class.getResource("/res/sharp_local_offer_red_24dp.png")));
+        this.closedItemIcon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(NuixItemsTree.class.getResource("/res/sharp_folder_black_24dp.png")));
+        this.openedItemIcon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(NuixItemsTree.class.getResource("/res/sharp_folder_open_black_24dp.png")));
+        this.taggedImportantIcon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(NuixItemsTree.class.getResource("/res/sharp_local_offer_green_24dp.png")));
+        this.taggedNotImportantIcon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(NuixItemsTree.class.getResource("/res/sharp_local_offer_red_24dp.png")));
         
         setClosedIcon(this.closedItemIcon);
         setOpenIcon(this.openedItemIcon);
