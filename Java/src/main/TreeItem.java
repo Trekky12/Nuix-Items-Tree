@@ -1,64 +1,65 @@
 package main;
 
+import gui.SettingsDialog;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.MutableTreeNode;
+import org.apache.log4j.Logger;
 
-public class TreeItem {
+public class TreeItem extends DefaultMutableTreeNode {
 
-    private final List<TreeItem> children = new ArrayList<TreeItem>();
     private String guid = null;
     private String name = null;
-    private List<String> tags = new ArrayList<String>();
-    private int descendants = 0;
+    private List<String> tags = new ArrayList<>();
+    private int descendantsCount = 0;
+    private int childItemsCount = 0;
 
     private boolean isTagged = false;
-    private boolean isItem;
+    private boolean isItem = false;
+
+    //private nuix.Item item;
+    private List<nuix.Item> childItems = new ArrayList<>();
+    private boolean loaded = false;
+
+    private final static Logger logger = Logger.getLogger(TreeItem.class);
 
     public TreeItem(String name) {
         this.name = name;
-        this.isItem = false;
+        this.loaded = true;
     }
 
     public TreeItem(nuix.Item item) {
-        this.isItem = true;
-        //this.item = item;
         this.name = item.getName();
-        this.descendants = item.getDescendants().size();
+        this.descendantsCount = SettingsDialog.showDescendantsCount ? item.getDescendants().size() : 0;
+        this.childItemsCount = item.getChildren().size();
         this.guid = item.getGuid();
-        this.tags = new ArrayList<>(item.getTags());
         this.isItem = true;
+        this.tags = new ArrayList<>(item.getTags());
+        //this.childItems = item.getChildren();
     }
 
-    public void addChild(TreeItem childItem) {
-        children.add(childItem);
-    }
-
-    public List<TreeItem> getChildren() {
-        return children;
+    public void setChildren(List<TreeItem> children) {
+        logger.info("Set children");
+        removeAllChildren();
+        setAllowsChildren(children.size() > 0);
+        for (MutableTreeNode node : children) {
+            add(node);
+        }
+        this.loaded = true;
     }
 
     public boolean hasChild(TreeItem childItem) {
-        return children.contains(childItem);
+        return children != null ? children.contains(childItem) : false;
     }
-    
-    public TreeItem getChild(TreeItem childItem){
-        return children.get(children.indexOf(childItem));
+
+    public TreeItem getChild(TreeItem childItem) {
+        return (TreeItem) children.get(children.indexOf(childItem));
     }
 
     @Override
     public String toString() {
         return this.name;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (object != null && object instanceof TreeItem) {
-            TreeItem that = ((TreeItem) object);
-            if (!this.isItem && !that.isItem) {
-                return this.name.equals(that.name);
-            }
-        }
-        return super.equals(object);
     }
 
     public void addTag(String tag) {
@@ -88,8 +89,24 @@ public class TreeItem {
         return guid;
     }
 
-    public int getDescendants() {
-        return descendants;
+    public int getDescendantsCount() {
+        return descendantsCount;
     }
 
+    public int getChildItemsCount() {
+        return childItemsCount;
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return this.isItem ? this.getChildItemsCount() == 0 : false;
+    }
+
+    public List<nuix.Item> getChildItems() {
+        return childItems;
+    }
+
+    public boolean isLoaded() {
+        return loaded;
+    }
 }

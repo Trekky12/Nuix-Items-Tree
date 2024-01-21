@@ -8,6 +8,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import nuix.Case;
+import nuix.Utilities;
 import org.apache.log4j.Logger;
 
 public class NuixItemsTree extends javax.swing.JFrame {
@@ -16,13 +17,13 @@ public class NuixItemsTree extends javax.swing.JFrame {
 
     private final SettingsDialog settingsDialog = new SettingsDialog(this, false);
 
-    public NuixItemsTree(Case nuixCase) {
+    public NuixItemsTree(Case nuixCase, Utilities utilities) {
         logger.info("Starting Nuix Items Tree");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Nuix Items Tree");
 
-        InvestigatePanel investigatePanel = new InvestigatePanel(nuixCase);
+        InvestigatePanel investigatePanel = new InvestigatePanel(nuixCase, utilities);
         setContentPane(investigatePanel);
         setMinimumSize(investigatePanel.getMinimumSize());
 
@@ -49,14 +50,12 @@ public class NuixItemsTree extends javax.swing.JFrame {
                 logger.info("Save Settings");
                 settingsDialog.reloadProperties();
 
-                JOptionPane.showConfirmDialog(null,
-                        "Please note that when the tag names are changed the tree needs to be reloaded to represent the changes.\nThe displayed tree is using the old tag names!",
+                if (JOptionPane.showConfirmDialog(null,
+                        "Please note that when the tag names are changed the tree needs to be reloaded to represent the changes.\nThe displayed tree is using the old tag names!\n\nDo you want to reload the tree?",
                         "Settings closed",
-                        JOptionPane.DEFAULT_OPTION,
-                        JOptionPane.PLAIN_MESSAGE);
-
-                investigatePanel.setMaxLevelBtnText();
-                investigatePanel.repaintTree();
+                        JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                    investigatePanel.buildTree();
+                }
             }
         });
     }
